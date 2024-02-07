@@ -1,0 +1,22 @@
+{
+  "name": "festivalmusica_inicio",
+  "version": "1.0.0",
+  "description": "proyecto con Gulp, SASS y HTML",
+  "main": "index.js",
+  "scripts": {
+    "tarea": "gulp tarea",
+    "sass": "sass --watch src/scss:build/css",
+    "css": "gulp css"
+  },
+  "keywords": [
+    "SASS",
+    "Gulp"
+  ],
+  "author": "Jonathan Boada",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-sass": "^5.1.0",
+    "sass": "^1.70.0"
+  }
+}
