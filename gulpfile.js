@@ -5,6 +5,11 @@ const { src, dest, watch, parallel } = require("gulp");
 const sass = require("gulp-sass")(require("sass"));
 const plumber = require("gulp-plumber");
 
+//Imagenes
+const cache = require('gulp-cache')
+const imagemin = require('gulp-imagemin')
+const avif = require('gulp-avif');
+
 // Tarea para compilar CSS desde Sass
 function css(done) {
   src("src/scss/**/*.scss") // Identificar el archivo SASS
@@ -14,6 +19,20 @@ function css(done) {
 
   done(); // Callback que avisa a gulp cuando llegamos al final
 }
+
+// Aligerear imagenes con gulp
+
+function imagenes(done) {
+  const opciones = {
+    optimizationLevel: 3
+  }
+  src('src/img/**/*.{png,jpg}')
+    .pipe(cache(imagemin(opciones)))
+    .pipe(dest('build/img'))
+  done();
+}
+
+
 
 // Tarea para convertir imágenes a formato WebP
 function versionWebp(done) {
@@ -33,14 +52,38 @@ function versionWebp(done) {
     });
 }
 
+// Tarea para convertir imágenes a formato Avif
+
+function versionAvif(done) {
+  const options = {
+    quality: 50,
+  };
+  src("src/img/**/*.{png,jpg}")
+    .pipe(avif(options))
+    .pipe(dest("build/img"));
+
+  done();
+}
+
+function javascript(done) {
+  src('src/js/**/*.js')
+    .pipe(dest('build/js'));
+  done();
+}
+
+
 // Tarea de desarrollo que observa cambios en archivos SASS
 function dev(done) {
   watch("src/scss/**/*.scss", css);
+  watch("src/js/**/*.js", javascript);
 
   done(); // Callback que avisa a gulp cuando llegamos al final
 }
 
 // Exportación de tareas
 exports.css = css;
+exports.js = javascript;
+exports.imagenes = imagenes;
 exports.versionWebp = versionWebp;
-exports.dev = parallel(versionWebp, dev); // Se pueden llamar en la terminal con npm run "tarea" - npx gulp "tarea" - gulp "tarea"
+exports.versionAvif = versionAvif;
+exports.dev = parallel(imagenes, versionWebp, versionAvif, javascript, dev); // Se pueden llamar en la terminal con npm run "tarea" - npx gulp "tarea" - gulp "tarea"
